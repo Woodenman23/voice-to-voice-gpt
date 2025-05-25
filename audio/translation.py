@@ -1,4 +1,4 @@
-
+import time
 import queue
 import json
 import io
@@ -70,6 +70,9 @@ def text_to_audio(text):
     mp3_fp.seek(0)
 
     audio = AudioSegment.from_file(mp3_fp, format="mp3")
+    return audio
+
+def play_audio(audio):
     play_obj = sa.play_buffer(
         audio.raw_data,
         num_channels=audio.channels,
@@ -77,3 +80,24 @@ def text_to_audio(text):
         sample_rate=audio.frame_rate
     )
     play_obj.wait_done()
+
+# def play_audio_interruptible(audio, interrupt_event, chunk_ms=200):
+#     position = 0
+#     interrupted = False
+
+#     while position < len(audio):
+#         if interrupt_event.is_set():
+#             interrupted = True
+#             break
+        
+#         chunk = audio[position:position + chunk_ms]
+#         play_obj = sa.play_buffer(
+#             chunk.raw_data,
+#             num_channels=chunk.channels,
+#             bytes_per_sample=chunk.sample_width,
+#             sample_rate=chunk.frame_rate
+#         )
+#         play_obj.wait_done()
+#         position += chunk_ms
+
+#     return interrupted
