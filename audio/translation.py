@@ -1,14 +1,13 @@
 import queue
 import json
-import io
+import os
 
+from elevenlabs import play
+from elevenlabs.client import ElevenLabs
 from pathlib import Path
 import sounddevice as sd
 import webrtcvad
 from vosk import Model, KaldiRecognizer
-from gtts import gTTS
-from pydub import AudioSegment
-import simpleaudio as sa
 
 
 q = queue.Queue()
@@ -34,7 +33,7 @@ def audio_to_text():
     rec = KaldiRecognizer(model, samplerate)
     
     silence_counter = 0
-    max_silence = 50
+    max_silence = 33
 
     with sd.RawInputStream(
         samplerate=samplerate, 
@@ -63,40 +62,20 @@ def audio_to_text():
     return prompt_text
 
 def text_to_audio(text):
-    tts = gTTS(text=text, lang='en')
-    mp3_fp = io.BytesIO()
-    tts.write_to_fp(mp3_fp)
-    mp3_fp.seek(0)
+    api_key = os.getenv("ELEVENLABS_API_KEY")
+    if not api_key:
+        print("no elevenlabs api key env var found.")
+        return None
+    
+    client = ElevenLabs(api_key=api_key)
+    
+    audio = client.text_to_speech.convert(
+        text=text,
+        voice_id="Oe8Lhg3t63j9BsrTQBjx",
+        model_id="eleven_multilingual_v2"
+    )
 
-    audio = AudioSegment.from_file(mp3_fp, format="mp3")
     return audio
 
 def play_audio(audio):
-    play_obj = sa.play_buffer(
-        audio.raw_data,
-        num_channels=audio.channels,
-        bytes_per_sample=audio.sample_width,
-        sample_rate=audio.frame_rate
-    )
-    play_obj.wait_done()
-
-# def play_audio_interruptible(audio, interrupt_event, chunk_ms=200):
-#     position = 0
-#     interrupted = False
-
-#     while position < len(audio):
-#         if interrupt_event.is_set():
-#             interrupted = True
-#             break
-        
-#         chunk = audio[position:position + chunk_ms]
-#         play_obj = sa.play_buffer(
-#             chunk.raw_data,
-#             num_channels=chunk.channels,
-#             bytes_per_sample=chunk.sample_width,
-#             sample_rate=chunk.frame_rate
-#         )
-#         play_obj.wait_done()
-#         position += chunk_ms
-
-#     return interrupted
+    play(audio)

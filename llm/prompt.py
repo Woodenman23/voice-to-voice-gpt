@@ -1,7 +1,7 @@
 from openai import OpenAI
 from pathlib import Path
 
-TOKEN = (Path.home() / ".ssh/openai").read_text().strip()
+TOKEN = (Path.home() / ".api_keys/openai_key").read_text().strip()
 
 client = OpenAI(api_key=TOKEN)
 
@@ -16,7 +16,7 @@ def send_prompt(prompt: str) -> str:
                 "You are a helpful, voice-based assistant."
                 "Speak naturally, like you are talking to a friend."
                 "Keep your answers short and to the point."
-                "Use conversational language, contractions, and occasionally check in like 'Want to hear more?'"
+                "Use conversational language, contractions."
             ),
         },
         {

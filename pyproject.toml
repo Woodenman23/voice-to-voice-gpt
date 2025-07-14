@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "chatbot1"
+version = "0.1.0"
+description = "Simply python app to speak to chat bots via apis (elevenlabs voices"
+authors = ["Joe Foster <joe.foster@protonmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+openai = "^1.95.1"
+pathlib = "^1.0.1"
+webrtcvad = "^2.0.10"
+elevenlabs = "^2.7.1"
+sounddevice = "^0.5.2"
+vosk = "^0.3.45"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
